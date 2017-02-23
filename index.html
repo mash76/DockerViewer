@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>DockerViewer</title>
+    <link href="./style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+
+    <!-- header -->
+    <div class="underline" style="padding:3px;">
+      <table width="100%" style="padding:0px;margin:0px;">
+        <tr>
+          <td width="50%" valign="top" >
+            docker(
+            <span onClick="$('#docker_info').slideToggle(10)" class="btn" >info</span>
+            <span onClick="$('#docker_ver_info').slideToggle(10)" class="btn" >version</span>
+            <span onClick="$('#docker_image_info').slideToggle(10)" class="btn" >ps/image</span>
+            help
+            <span onClick="$('#docker_help_info').slideToggle(10)" class="btn" >docker</span>
+            <span onClick="$('#docker_help_machine_info').slideToggle(10)" class="btn" >machine</span>
+            <span onClick="$('#docker_help_compose_info').slideToggle(10)" class="btn" >compose</span>
+            )
+            <span onClick="toggleDevTools()" class="btn" >devTools</span>
+            <span onClick="$('#nodejs_info').slideToggle(10)" class="btn" >node-<span id="node_version"></span></span>
+            <span onClick="toggleFullScreen()" class="btn" >fullscreen</span>
+            <span onClick="$('#shortcut').slideToggle(10)" class="btn" >shortcut</span>
+            <span onClick="osRunOut('rm ' + _G.save_path + '/*', 'debug_out','replace')" class="btn" >delCacheFlie</span>
+            <span onClick="showCommandLog(); $('#command_log').slideToggle(10)" class="btn" >commandlog</span>
+
+
+          </td>
+          <td width="50%" align="right" >
+          </td>
+        </tr>
+      </table>
+
+      <div id="command_list" class="detail hide"></div>
+      <div id="command_log" class="detail hide">
+          <input type="text" id="button">
+          <button>show</button>
+          <div id="command_log_detail" class="detail hide"></div>
+      </div>
+      <div id="shortcut" class="detail hide">
+          Com 1  - Repository List  <br/>
+          <br/>
+          Repo <br/>
+          Com 2  - BranchList<br/>
+          Com O  - OpenWith Finder,Atom,Sublime <br/>
+          <br/>
+          Branch <br/>
+          Com 3  - Status <br/>
+          Com 4  - File Search<br/>
+          Com 5  - Commit Log <br/>
+          <br/>
+          Develop <br/>
+          Com D  - JS DeveloperConsole <br/>
+
+
+      </div>
+      <div id="nodejs_info" class="detail hide"></div>
+      <div id="docker_info" class="detail hide"></div>
+      <div id="docker_ver_info" class="detail hide"></div>
+      <div id="docker_image_info" class="detail hide"></div>
+      <div id="docker_help_info" class="detail hide"></div>
+      <div id="docker_help_machine_info" class="detail hide"></div>
+      <div id="docker_help_compose_info" class="detail hide"></div>
+      <div id="gitconf" class="hide code detail" style="text-align:left;"></div>
+
+      <div class="m5">
+          <span onClick="toggleTopPanes('local_repo_pane','toggle')" class="btn bold s120" >DockerDirs<span id="docker_dir_count" class="s120"></span></span>
+          <span onClick="showGitInit();" class="btn" >init</span>
+          <span onClick="showGitClone();" class="btn" >clone</span>
+          <span id="his_repo"></span>
+      </div>
+    </div>
+
+
+
+    <div id="local_repo_pane" pane="top" class="detail hide" >
+      <input type="text" id="filter_l_repo" size=20 placeholder ="repository name"/>
+      <span onclick="findLocalRepos('refresh')" class="btn">reload</span>
+      <div id="local_repo_list"></div>
+    </div>
+
+    <div id="debug_out" style="detail"></div>
+
+    <!-- current repository  -->
+    <div id="repo_info" class="m10 hide"></div>
+    <!-- current branch -->
+    <div id="branch_info" class="m10 hide"></div>
+  
+
+
+  </body>
+
+  <script>
+    require('./renderer.js')
+    require('./js/functions.js')
+
+    // index_branch.html  index_repo.html
+    $('#repo_info').html( loadText(process.cwd() + '/i_repo.html' ))
+    $('#branch_info').html( loadText(process.cwd() + '/i_branch.html' ))
+
+    require('./js/debug.js')
+
+    // You can also require other files to run in this process
+     require('./js/repository.js')
+     require('./js/branch.js')
+     require('./js/init.js')
+    </script>
+</html>
