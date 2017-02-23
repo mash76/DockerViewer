@@ -2,7 +2,8 @@
 
 for MAC.  
 Simple,Quick,Easy.  
-Shortest Code.  
+Shortest Code.
+manipulate docker,docker-compose,docker-machine,images,processes
 
 #install
 
