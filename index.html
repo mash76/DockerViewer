@@ -14,20 +14,24 @@
           <td width="50%" valign="top" >
             docker(
             <span onClick="$('#docker_info').slideToggle(10)" class="btn" >info</span>
-            <span onClick="$('#docker_ver_info').slideToggle(10)" class="btn" >version</span>
+            <span onClick="$('#docker_ver_info').slideToggle(10)" class="btn" >
+              version<span id="docker_ver_num"></span>
+            </span>
             <span onClick="$('#docker_image_info').slideToggle(10)" class="btn" >ps/image</span>
             help
             <span onClick="$('#docker_help_info').slideToggle(10)" class="btn" >docker</span>
             <span onClick="$('#docker_help_machine_info').slideToggle(10)" class="btn" >machine</span>
             <span onClick="$('#docker_help_compose_info').slideToggle(10)" class="btn" >compose</span>
             )
-            <span onClick="toggleDevTools()" class="btn" >devTools</span>
-            <span onClick="$('#nodejs_info').slideToggle(10)" class="btn" >node-<span id="node_version"></span></span>
-            <span onClick="toggleFullScreen()" class="btn" >fullscreen</span>
-            <span onClick="$('#shortcut').slideToggle(10)" class="btn" >shortcut</span>
-            <span onClick="osRunOut('rm ' + _G.save_path + '/*', 'debug_out','replace')" class="btn" >delCacheFlie</span>
-            <span onClick="showCommandLog(); $('#command_log').slideToggle(10)" class="btn" >commandlog</span>
 
+            <span onClick="$('#develop_menu').slideToggle(10)" class="btn" >develop</span>
+            <div id="develop_menu" class="detail hide">
+              <span onClick="toggleDevTools()" class="btn" >devTools</span>
+              <span onClick="$('#nodejs_info').slideToggle(10)" class="btn" >node-<span id="node_version"></span></span>
+              <span onClick="$('#shortcut').slideToggle(10)" class="btn" >shortcut</span>
+              <span onClick="osRunOut('rm ' + _G.save_path + '/*', 'debug_out','replace')" class="btn" >delCacheFlie</span>
+              <span onClick="showCommandLog(); $('#command_log').slideToggle(10)" class="btn" >commandlog</span>
+            </div>
 
           </td>
           <td width="50%" align="right" >
@@ -66,6 +70,8 @@
       <div id="docker_help_machine_info" class="detail hide"></div>
       <div id="docker_help_compose_info" class="detail hide"></div>
       <div id="gitconf" class="hide code detail" style="text-align:left;"></div>
+
+      <div id="docker_inspect" class="detail">inspect</div>
 
       <div class="m5">
           <span onClick="toggleTopPanes('local_repo_pane','toggle')" class="btn bold s120" >DockerDirs<span id="docker_dir_count" class="s120"></span></span>

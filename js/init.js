@@ -14,15 +14,36 @@ osRunCb('docker-compose -v', function(ret_ary,stderr,command){
   $('#docker_ver_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
 })
 osRunCb('docker info', function(ret_ary,stderr,command){
-  $('#docker_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+  $('#docker_info').append(sRed(command) + '<pre>' + ret_ary.join('<br/>') + '</pre>')
+
+  // versionを表示
+  for (var ind in ret_ary) {
+    if (ret_ary[ind].match(/Server Version/)) $('#docker_ver_num').html(ret_ary[ind].replace(/.*: /,''))
+  }
 })
 
-osRunCb('docker images', function(ret_ary,stderr,command){
-  $('#docker_image_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+
+osRunCb('docker images # ', function(ret_ary,stderr,command){
+  $('#docker_image_info').append(sRed(command) + '<pre>' + ret_ary.join('<br/>') + '</pre>')
 })
-osRunCb('docker ps', function(ret_ary,stderr,command){
-  $('#docker_image_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+osRunCb('docker ps -s # 起動中', function(ret_ary,stderr,command){
+  $('#docker_image_info').append(sRed(command) + '<pre>' + ret_ary.join('<br/>') + '</pre>')
 })
+osRunCb('docker ps -a # 全コンテナ', function(ret_ary,stderr,command){
+
+  //idのマウスoverでinspectだす
+  for (var ind in ret_ary){
+    docker_inspect
+
+  }
+
+
+  $('#docker_image_info').append(sRed(command) + '<pre>' + ret_ary.join('<br/>') + '</pre>')
+})
+osRunCb('docker network ls ', function(ret_ary,stderr,command){
+  $('#docker_image_info').append(sRed(command) + '<pre>' + ret_ary.join('<br/>') + '</pre>')
+})
+
 
 osRunCb('docker --help', function(ret_ary,stderr,command){
   $('#docker_help_info').append(sRed(command) + '<pre>' + ret_ary.join('\n') + '</pre>')
@@ -38,10 +59,9 @@ osRunCb('docker-machine --help', function(ret_ary,stderr,command){
 osRunCb('node -v', function(ret_ary,stderr,command){
   $('#nodejs_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
 })
-
-// osRunCb( 'npm -g list', function(ret_ary,stderr,command){
-//   $('#nodejs_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
-// })
+osRunCb( 'npm -g list', function(ret_ary,stderr,command){
+  $('#nodejs_info').append(sRed(command) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+})
 
 // ipc関連初期化
 const {ipcRenderer} = require('electron')
