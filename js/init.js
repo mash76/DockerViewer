@@ -90,7 +90,7 @@ document.onkeydown = function(e){
   //console.log('metakyu kyu : ',e.metaKey,e.key)
 
   if (e.metaKey && e.key == "1") {
-      filterLocalRepos('')
+      filterDockerFiles('')
       toggleTopPanes('local_repo_pane',"toggle")
   }
   if (e.metaKey && e.key == "2") {  // branches
@@ -98,7 +98,7 @@ document.onkeydown = function(e){
     toggleRepoDescPanes('local_branch','toggle')
   }
   if (e.metaKey && e.key == "3") {  // status
-      makePaneStatus('replace')
+     // makePaneStatus('replace')
       openPaneCenter('pane_status');
   }
 
@@ -140,7 +140,7 @@ $('#filter_l_repo').keyup(function(e){
       setRepoPath( top_filtered_repo )
       return ;
     }
-    filterLocalRepos($('#filter_l_repo').val())
+    filterDockerFiles($('#filter_l_repo').val())
 })
 
 $('#filter_filelist').keyup(function(e){

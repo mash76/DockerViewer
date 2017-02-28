@@ -13,120 +13,38 @@ findLocalDockerdir = function(is_refresh){ // search
     console.log('get from file local repos ',file_fullpath,_G.local_repos)
     $('#docker_dir_count').html(_G.local_repos.length)
     toggleTopPanes('local_repo_pane',"down")
-    filterLocalRepos('')
+    filterDockerFiles('')
   }else{
+
     console.log('find')
+    $('#docker_dir_count').html("");
+    _G.local_repos = [];
+
     osRunCb("find ~ -type f -maxdepth 5 | egrep -i '/Dockerfile$' ",
       function( ret_ary ){
           console.log(ret_ary.join(','));
-          _G.local_repos = ret_ary
-          $('#docker_dir_count').html(_G.local_repos.length)
+          _G.local_repos = _G.local_repos.concat(ret_ary)
+          $('#docker_dir_count').append(_G.local_repos.length)
           saveJson(file_fullpath,_G.local_repos)
           toggleTopPanes('local_repo_pane',"down")
-          filterLocalRepos('')
-      }
-    )
+          filterDockerFiles('')
+      })
+
+    osRunCb("find ~ -type f -maxdepth 5 | egrep -i '/docker-compose.*?.yml$' ",
+      function( ret_ary ){
+          console.log(ret_ary.join(','));
+          _G.local_repos = _G.local_repos.concat(ret_ary)
+          $('#docker_dir_count').append(_G.local_repos.length)
+          saveJson(file_fullpath,_G.local_repos)
+          toggleTopPanes('local_repo_pane',"down")
+          filterDockerFiles('')
+      })
   }
 }
 
-
-
-//init 画面表示  レコメンドパスを指定 現在多くリポジトリのあるパスを優先
-showGitInit = function(){
-    toggleTopPanes('gitinit_pane',"toggle")
-
-    // 複数リポジトリのあるフォルダは その人の作業フォルダであろう
-    var reco_paths = []
-    for (var ind in _G.local_repos){
-        var path = path2dir(_G.local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
-        if (!reco_paths[path]) {
-          reco_paths[path] =1
-        }else{
-          reco_paths[path]++
-        }
-    }
-    $('#init_recommend_path').html('')
-    for (var ind in reco_paths){
-        $('#init_recommend_path').append(
-          '<a onClick="$(\'#init_path\').val($(this).text())" href="javascript:void(0);">' +
-          ind + '</a> ' + reco_paths[ind] + '<br/>')
-    }
-}
-
-showGitClone = function(){
-    toggleTopPanes('gitclone_pane',"toggle")
-
-    var reco_paths = []
-    for (var ind in _G.local_repos){
-        var path = path2dir(_G.local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
-        if (!reco_paths[path]) {
-          reco_paths[path] = 1
-        }else{
-          reco_paths[path]++
-        }
-    }
-    $('#clone_recommend_path').html('')
-    for (var ind in reco_paths){
-        $('#clone_recommend_path').append('<a onClick="$(\'#clone_dir\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
-    }
-}
-
 showCommandLog = function(){
-    console.log(111)
-    
-
     $('#command_log').html( _G.commandlog.join('<br/>') );
-
 }
-
-gitSubmoduleAdd = function(){
-
-  var com = "git submodule add '" + $('#submodule_url').val() + "' '" + $('#submodule_name').val() + "'"
-  osRunCb(com,
-    function(ret_ary,stderr){
-      $('#submodule_details').html('')
-      $('#submodule_details').append(sRed(com) + " " + sGray(ret_ary.length) + '<br/>')
-      $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) )
-      $('#submodule_details').append(replaceTabSpc(stderr.replace(/\n/,'<br/>')) +'<br/>')
-      showGitmodules('append')
-  })
-}
-
-showGitmodules = function(action){ // append replace
-
-  if (!action.match(/(append|replace)/)) alert('showGitmodules action:' + action)
-  if (action == 'replace') $('#submodule_details' ).html('')
-
-
-  var git_command = 'cat ' + path2dir( _G.current_repo_path ) + '/.gitmodules'
-  osRunCb(git_command,
-    function(ret_ary,stderr){
-
-      for (var ind in ret_ary){
-          ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
-      }
-
-      $('#submodule_details').append(sRed(git_command) + " " + sGray(ret_ary.length))
-      $('#submodule_details').append('<pre class="code">' + ret_ary.join('<br/>') + '</pre>')
-  })
-
-  var git_com2 = 'git submodule status'
-  osRunCb(git_com2,
-    function(ret_ary,stderr){
-
-      if (ret_ary.length == 0){
-        $('#submodule_btncolor').attr('class','btn_silver')
-      }else{
-        $('#submodule_btncolor').attr('class','btn')
-      }
-
-      $('#submodule_count').html(ret_ary.length)
-      $('#submodule_details').append(sRed(git_com2) + " " + sGray(ret_ary.length) + '<br/>')
-      $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) + '<br/><br/>')
-  })
-}
-
-
 
 
 // fuc名直す top pane郡のトグル
@@ -146,7 +64,7 @@ toggleTopPanes = function (key,action){  //action == up down toggle
 
       $('#' + key).slideDown(10)
       $('#filter_l_repo').val('')
-      filterLocalRepos('')
+      filterDockerFiles('')
       $('#filter_l_repo').focus()
   }
 }
@@ -202,19 +120,9 @@ setCurrentBranchName = function(){
     })
 }
 
-checkOut = function ( branch_name ){
-    $('#debug_out').html('')
-    var com = "git checkout '" + branch_name + "'"
-    osRunOut(com,'debug_out','append',
-      function(){
-          setRepoPath(_G.current_repo_path)
-      }
-   )
-}
 
-
-//ローカルリポジトリ一覧を表示
-filterLocalRepos = function (filter){
+//dockerfileと docker-compose.yml関連の一覧を表示
+filterDockerFiles = function (filter){
 
   $('#local_repo_list').html("<table>");
   top_filtered_repo =""
@@ -255,6 +163,8 @@ showHisRepo = function(){
 
 //main_repo_name  submodules_list
 setMainRepo = function(full_path){
+    console.log("local_repo");
+
     $('#main_repo_name').html( '<span onClick="setRepoPath(\'' + full_path + '\')">' + path2pjname(full_path) + '</span>' )
 
 
@@ -266,16 +176,7 @@ setMainRepo = function(full_path){
 
     setRepoPath(full_path)
 
-    osRunCb('git submodule status',
-      function(ret_ary){
-        for (var ind in ret_ary){
-            var subname = ret_ary[ind].trim().replace(/(.*?\S+)(.*?\S+)(.*?\S+)/,'$2').trim()
-            $('#submodules_list').append('<span onClick="setRepoPath(\'' + path2dir(full_path) + '/' + subname + '\')"> ' + subname+ '</span>')
-        }
-      })
-
 }
-
 
 // set local repository
 setRepoPath = function(full_path) {
@@ -285,7 +186,6 @@ setRepoPath = function(full_path) {
      osRunCb('cat ' + full_path,
       function(ret_ary,stderr,com){
           $('#dockerfile_cat').html(ret_ary.join('<br/>'))
-
       })
 
     //現在dirセット
@@ -301,9 +201,7 @@ setRepoPath = function(full_path) {
     //branch
     setCurrentBranchName()
     tglRepoPane("local_branch",'up') // close
-    makePaneStatus('replace')
-
-
+    //makePaneStatus('replace')
 
     osRunOneLine("du -d0 -h | perl -pne 's/(\\t.*)//' " , 'current_repo_size') //ディスク使用量 タブ以降の . を削除
 

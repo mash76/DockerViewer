@@ -246,7 +246,6 @@ makePaneLog = function( filter, lineOrTree ){
                     line_ary.push(sSilver('-'))
                     line_ary.push(sSilver('-'))
                     line_ary.push(sSilver('-'))
-                    
                  }
                  ret_ary[ind] = '<tr><td nowrap>' + line_ary.join('</td><td nowrap >')　+ '</td></tr>'
              }
@@ -257,7 +256,9 @@ makePaneLog = function( filter, lineOrTree ){
              }
              $('#pane_log_detail').append('<pre class="detail code"><table>' + str_out + '</table></pre>')
 
-            // tree
+
+
+          // tree
           // }else{
           //    var str_out = ret_ary.join('\n')
           //    for (var ind in filter_ary){
@@ -271,114 +272,6 @@ makePaneLog = function( filter, lineOrTree ){
           openPaneCenter('pane_log');
           $('#filter_log').focus()
      })
- }
-
-
-gitAdd = function(){
-     osRunOut('git add .','pane_status_detail', 'replace', function(){ makePaneStatus('append')  })
-}
-gitReset = function(){
-     osRunOut('git reset','pane_status_detail', 'replace',function(){ makePaneStatus('append')  })
-}
-prepareGitClean = function(){
-     osRunOut('git clean -n','pane_status_detail', 'replace')
-}
-runGitClean = function(){
-     osRunOut('git clean -f','pane_status_detail', 'replace', function(){ makePaneStatus('append')  })
 }
 
-makePaneStatus = function(action){ // append replace
 
-    if (!action.match(/(append|replace)/)) alert('makePaneStatus action:' + action)
-    if (action == 'replace') $('#pane_status_detail').html('')
-
-   var com1 = 'git status -s -b'
-   osRunCb(com1,
-     function(ret_ary){
-       $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com1)) + " " + sGray(ret_ary.length) + '<br/>' )
-
-       var st = []
-       var status_ct = 0
-       for (var ind in ret_ary){
-          //ステータスをカウント
-          var stt = ret_ary[ind].substr(0,2)
-          if (stt != "##"){
-            if (!st[stt]) st[stt] = 0
-            st[stt]++
-            status_ct++
-          }
-          //fileへのリンク
-          if (!ret_ary[ind].match(/##/)){
-              ret_ary[ind] = ret_ary[ind].replace(/( *\S+ *)(\S+)/,'$1' + '<a onClick="makePaneFileStat(\'$2\')" href="javascript:void(0);" >$2</a>')
-          }
-       }
-
-       console.log(st)
-      // >> がなければ cleanできない
-      if (st['??'] == undefined) $('#btn_st_clean').addClass('silver')
-
-
-      var staged = false
-      var can_stage = false
-      var can_stash = false
-      for (var ind in st){
-        if (!ind[0].match(/[ \?]/) ) staged = true  // 1文字目が spaceでも?でもない項目があればstage済 > reset使える
-        if (!ind[1].match(/[ ]/) ) can_stage = true  // 2文字目が spaceでない項目があればstage可能 add使える
-        if (ind.match(/[A-Z]/) ) can_stash = true  // 1-2文字目が アルファベット大文字含んでいれば使える
-
-      }
-
-      if (staged){
-          $('#btn_st_reset').removeClass('silver') 
-          $('#btn_st_commit').removeClass('silver') 
-      }else{
-          $('#btn_st_reset').addClass('silver')
-          $('#btn_st_commit').addClass('silver')
-      }
-      if (can_stage){
-          $('#btn_st_add').removeClass('silver') 
-      }else{
-          $('#btn_st_add').addClass('silver')
-      }
-      if (can_stash){
-          $('#btn_st_stash').removeClass('silver') 
-      }else{
-          $('#btn_st_stash').addClass('silver')
-      }
-
-      // id="btn_st_status"  id="btn_st_add"  
-      // id="btn_st_reset"  id="btn_st_commit" id="btn_st_stash" id="btn_st_clean" 
-
-
-
-       $('#br_status_ct').html(status_ct)
-       $('#pane_status_detail').append('<pre class="code">' + ret_ary.join('\n') + '</pre>')
-
-       var com2 = 'git diff --cached #最後のcommitと現在変更してstageしたもの(index)の違い'
-       osRunCb(com2,
-         function(ret_ary){
-           for (var ind in ret_ary){
-              ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
-           }
-           ret_ary = diffColor(ret_ary)
-           var ret_out_str = ret_ary.join('<br/>')
-           $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
-         }
-       )
-
-       var com3 = 'git diff #addした後の再変更'
-       osRunCb(com3,
-         function(ret_ary){
-           for (var ind in ret_ary){
-             ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
-           }
-           ret_ary = diffColor(ret_ary)
-           var ret_out_str = ret_ary.join('\n')
-
-           $('#pane_status_detail').append(
-                '<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + 
-                '<pre class="detail code" >' + ret_out_str + '</pre>' )
-         }
-       )
-    })
- }

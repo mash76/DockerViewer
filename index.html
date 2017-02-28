@@ -11,7 +11,7 @@
     <div class="underline" style="padding:3px;">
       <table width="100%" style="padding:0px;margin:0px;">
         <tr>
-          <td width="50%" valign="top" >
+          <td width="70%" valign="top" >
             docker(
             <span onClick="$('#docker_info').slideToggle(10)" class="btn" >info</span>
             <span onClick="$('#docker_ver_info').slideToggle(10)" class="btn" >
@@ -34,11 +34,12 @@
             </div>
 
           </td>
-          <td width="50%" align="right" >
+          <td width="30%" align="right" >
           </td>
         </tr>
       </table>
 
+      
       <div id="command_list" class="detail hide"></div>
       <div id="command_log" class="detail hide">
           <input type="text" id="button">
@@ -75,8 +76,6 @@
 
       <div class="m5">
           <span onClick="toggleTopPanes('local_repo_pane','toggle')" class="btn bold s120" >DockerDirs<span id="docker_dir_count" class="s120"></span></span>
-          <span onClick="showGitInit();" class="btn" >init</span>
-          <span onClick="showGitClone();" class="btn" >clone</span>
           <span id="his_repo"></span>
       </div>
     </div>
